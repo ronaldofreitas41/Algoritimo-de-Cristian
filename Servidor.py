@@ -3,8 +3,8 @@ import ntplib
 from time import ctime
 
 NTP_SERVER = "pool.ntp.org"
-HOST = '192.168.5.60'# endereço IP do servidor
-PORT = 3000  
+HOST = '192.168.3.148'# endereço IP do servidor
+PORT = 123 
 
 
 # Configuração do cliente NTP
