@@ -16,15 +16,15 @@ ADJUST_TIME = 10  # segundos
 while True:
     # Recebe o horário do servidor
     server_time_str = sock.recv(1024).decode()
-    server_time = datetime.strptime(server_time_str, "%a %b %d %H:%M:%S %Y")
+    server_time = time.strptime(server_time_str,"%Y-%m-%d %H: %M: %S")
 
     # Calcula a diferença de tempo
-    diff = server_time - datetime.now()
+    diff = server_time - time.time()
 
     # Ajusta o relógio gradualmente
     for i in range(ADJUST_TIME):
         
-        new_time = datetime.now() + diff/ADJUST_TIME
+        new_time = time.time() + diff/ADJUST_TIME
         new_time_str = time.starftime("%Y-%m-%d %H: %M: %S", new_time)        
         subprocess.call(["timedatactl","set-ntp","false"])
         subprocess.call(["sudo","timedatectl","set-time",new_time_str])
