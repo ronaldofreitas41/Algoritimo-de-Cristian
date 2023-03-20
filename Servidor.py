@@ -1,32 +1,36 @@
 import socket
 import ntplib
-import time
+from time import ctime
 
-# Configuração do servidor
-HOST = 'localhost'
-PORT = 12345
+NTP_SERVER = "pool.ntp.org"
+HOST = '192.168.5.60'# endereço IP do servidor
+PORT = 3000  
 
-# Conexão com o servidor NTP
+
+# Configuração do cliente NTP
 ntp_client = ntplib.NTPClient()
-ntp_server = 'br.pool.ntp.org'
 
-# Criação do socket do servidor
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind((HOST, PORT))
-s.listen()
+# Configuração do socket
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.bind((HOST, PORT))
+sock.listen(1)
+
+print(f"Servidor de hora iniciado em {HOST}:{PORT}")
 
 while True:
-    # Aguarda conexão com um cliente
-    conn, addr = s.accept()
-    print('Conectado por', addr)
+    conn, addr = sock.accept()
+    print(f"Conexão estabelecida com {addr}")
+    try:
+        # Obtem o horário do servidor NTP
+        response = ntp_client.request(NTP_SERVER)
+        ntp_time = response.tx_time
 
-    while True:
-        # Obtém o horário do servidor NTP
-        response = ntp_client.request(ntp_server)
-        server_time = response.tx_time
+        # Converte o horário para uma string formatada
+        date_time = ctime(ntp_time)
 
         # Envia o horário para o cliente
-        conn.sendall(str(server_time).encode())
-
-        # Aguarda 5 segundos antes de atualizar o horário novamente
-        time.sleep(5)
+        conn.send(date_time.encode())
+    except Exception as e:
+        print(f"Erro ao obter horário do servidor NTP: {e}")
+    finally:
+        conn.close()
