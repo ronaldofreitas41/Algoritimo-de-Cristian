@@ -2,8 +2,8 @@ import socket
 import ntplib
 from time import ctime
 
-NTP_SERVER = "br.pool.ntp.org"
-HOST = '127.0.0.1'# endereço IP do servidor
+NTP_SERVER = "pool.ntp.org"
+HOST = '192.168.5.60'# endereço IP do servidor
 PORT = 123 
 
 

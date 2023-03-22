@@ -1,9 +1,10 @@
 import socket
-import time 
+import time
 from datetime import datetime
+import datetime as dt
 import subprocess
 
-HOST = '127.0.0.1'  # endereço IP do servidor
+HOST = '192.168.5.60'  # endereço IP do servidor
 PORT = 123  # porta em que o servidor está escutando
 
 # Configuração do socket
@@ -16,19 +17,23 @@ ADJUST_TIME = 10  # segundos
 while True:
     # Recebe o horário do servidor
     server_time_str = sock.recv(1024).decode()
-    server_time = time.strptime(server_time_str,"%Y-%m-%d %H: %M: %S")
+    server_time = datetime.strptime(server_time_str, '%a %b %d %H:%M:%S %Y')
 
     # Calcula a diferença de tempo
-    diff = server_time - time.time()
+    diff = server_time - datetime.now()
+
     # Ajusta o relógio gradualmente
-    for i in range(ADJUST_TIME):
-        
-        new_time = time.time() + diff/ADJUST_TIME
-        new_time_str = time.starftime("%Y-%m-%d %H: %M: %S", new_time)        
-        subprocess.call(["timedatactl","set-ntp","false"])
-        subprocess.call(["sudo","timedatectl","set-time",new_time_str])
-        subprocess.call(["sudo","hwclock","--systohc"])
+    cont = 0
+    while diff.total_seconds() > cont:
+        cont += ADJUST_TIME
+        new_time = datetime.now() + dt.timedelta(seconds=ADJUST_TIME)
+        new_time_str = new_time.strftime('%Y-%m-%d %H:%M:%S')
+        # atualiza a hora do sistema
+        subprocess.run(["date", "-s", new_time_str])
         print(f"Horário ajustado para: {new_time}")
         time.sleep(1)
+
+    # Aguarda novo ajuste
+    time.sleep(ADJUST_TIME)
 
 sock.close()
