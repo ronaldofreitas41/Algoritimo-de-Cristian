@@ -3,8 +3,8 @@ import time
 from datetime import datetime
 import subprocess
 
-HOST = '192.168.3.148'  # endereço IP do servidor
-PORT = 3000  # porta em que o servidor está escutando
+HOST = '127.0.0.1'  # endereço IP do servidor
+PORT = 123  # porta em que o servidor está escutando
 
 # Configuração do socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -20,7 +20,6 @@ while True:
 
     # Calcula a diferença de tempo
     diff = server_time - time.time()
-
     # Ajusta o relógio gradualmente
     for i in range(ADJUST_TIME):
         
